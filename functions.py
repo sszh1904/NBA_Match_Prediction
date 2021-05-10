@@ -69,12 +69,12 @@ def get_team_stats(home_team, away_team):
     :return: match prediction inputs
     :rtype: df
     """
-    with open("team_stats.json", "r") as jsonFile:
+    with open("data/team_stats.json", "r") as jsonFile:
         data = json.load(jsonFile)
 
     df = pd.DataFrame()
     
-    df["HOME_x"] = [1]
+    df["HOME_TEAM"] = [home_team]
     df["AVG_PTS_x"] = [data[home_team]["AVG_PTS"]]
     df["AVG_AST_x"] = [data[home_team]["AVG_AST"]]
     df["AVG_OREB_x"] = [data[home_team]["AVG_OREB"]]
@@ -83,7 +83,7 @@ def get_team_stats(home_team, away_team):
     df["DEFRATE_x"] = [data[home_team]["DEFRATE"]]
     df["ELO_x"] = [data[home_team]["ELO"]]
     
-    df["HOME_y"] = [0]
+    df["AWAY_TEAM"] = [away_team]
     df["AVG_PTS_y"] = [data[away_team]["AVG_PTS"]]
     df["AVG_AST_y"] = [data[away_team]["AVG_AST"]]
     df["AVG_OREB_y"] = [data[away_team]["AVG_OREB"]]
@@ -121,4 +121,4 @@ def update_team_stats(team, game_result):
     
     return
 
-# print(get_team_stats('IND', 'GSW'))
+print(get_team_stats('IND', 'GSW'))

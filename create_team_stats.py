@@ -38,7 +38,7 @@ def create_json_file():
     print("Creating json file,,,")
     nba_teams = get_nba_teams()
     populate_team_stats(nba_teams)
-    with open('team_stats.json', 'w') as json_file:
+    with open('data/team_stats.json', 'w') as json_file:
         json.dump(team_stats, json_file, indent=4)
     print("Successfully created json file.")
     return

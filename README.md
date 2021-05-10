@@ -1,6 +1,6 @@
 # NBA-Match-Predictor
 
-Flow:
+Automated Daily Routine @12am US timing:
 1. Get game results for previous day
 2. For each game:
 a. Extract prediction
