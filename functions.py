@@ -1,7 +1,9 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
+import json
 
+# Getting next day matchups and adding it to "upcoming_games.json"
 def get_matchups():
     """
     Retrieves all the matchups from ESPN website for next day games.
@@ -59,6 +61,56 @@ def get_matchups():
         matchup_list.append(matchup_string)
     return matchup_list, game_date
 
+def get_team_stats(home_team, away_team):
+    """
+    Retrieves both teams stats from "team_stats.json".
+    Calculate disparities between teams stats.
+
+    :return: match prediction inputs
+    :rtype: df
+    """
+    with open("team_stats.json", "r") as jsonFile:
+        data = json.load(jsonFile)
+
+    df = pd.DataFrame()
+    
+    df["HOME_x"] = [1]
+    df["AVG_PTS_x"] = [data[home_team]["AVG_PTS"]]
+    df["AVG_AST_x"] = [data[home_team]["AVG_AST"]]
+    df["AVG_OREB_x"] = [data[home_team]["AVG_OREB"]]
+    df["AVG_DREB_x"] = [data[home_team]["AVG_DREB"]]
+    df["OFFRATE_x"] = [data[home_team]["OFFRATE"]]
+    df["DEFRATE_x"] = [data[home_team]["DEFRATE"]]
+    df["ELO_x"] = [data[home_team]["ELO"]]
+    
+    df["HOME_y"] = [0]
+    df["AVG_PTS_y"] = [data[away_team]["AVG_PTS"]]
+    df["AVG_AST_y"] = [data[away_team]["AVG_AST"]]
+    df["AVG_OREB_y"] = [data[away_team]["AVG_OREB"]]
+    df["AVG_DREB_y"] = [data[away_team]["AVG_DREB"]]
+    df["OFFRATE_y"] = [data[away_team]["OFFRATE"]]
+    df["DEFRATE_y"] = [data[away_team]["DEFRATE"]]
+    df["ELO_y"] = [data[away_team]["ELO"]]
+    
+    df["DIS_PTS"] = [df["AVG_PTS_x"][0] - df["AVG_PTS_y"][0]]
+    df["DIS_AST"] = [df["AVG_AST_x"][0] - df["AVG_AST_y"][0]]
+    df["DIS_OREB"] = [df["AVG_OREB_x"][0] - df["AVG_OREB_y"][0]]
+    df["DIS_DREB"] = [df["AVG_DREB_x"][0] - df["AVG_DREB_y"][0]]
+    df["DIS_OFFRATE"] = [df["OFFRATE_x"][0] - df["OFFRATE_y"][0]]
+    df["DIS_DEFRATE"] = [df["DEFRATE_x"][0] - df["DEFRATE_y"][0]]
+    df["DIS_ELO"] = [df["ELO_x"][0] - df["ELO_y"][0]]
+    
+    return df
+
+def predict(game):
+    """
+    Predict outcome of game for home team based on 8 features.
+
+    :return: Predicted outcome - 1/0
+    :rtype: integer
+    """
+    
+
 def update_team_stats(team, game_result):
     """
     Update team stats based on retrieved game results.
@@ -68,3 +120,5 @@ def update_team_stats(team, game_result):
     """
     
     return
+
+# print(get_team_stats('IND', 'GSW'))
