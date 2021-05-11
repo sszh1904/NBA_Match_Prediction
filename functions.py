@@ -3,6 +3,15 @@ import requests
 import pandas as pd
 import json
 
+import statsmodels.api as sm
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LinearRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn import svm
+
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import accuracy_score,roc_curve,auc,recall_score,f1_score,precision_score,classification_report,confusion_matrix,auc
 
 
 def update_team_stats(team, game_result):
@@ -113,15 +122,65 @@ def get_team_stats(home_team, away_team):
         
     return df
 
-def predict(game_df):
+def predict(df, game_df):
     """
     Predict outcome of game for home team based on 8 features.
 
     :return: Predicted outcome - 1/0
     :rtype: integer
     """
-    
-    return prediction
+    features_list = ['DIS_ELO', 'DIS_OFFRATE', 'DIS_DEFRATE', 'DIS_PTS', 'DIS_AST', 'DIS_OREB', 'DIS_DREB']
+    target = 'WL_x'
+
+    # Creating our independent and dependent variables
+    x = df[features_list]
+    y = df['PLUS_MINUS_x']
+
+    model = sm.OLS(y,x)
+    results = model.fit()
+
+    features_list = []
+    for i in range(len(x.keys())):
+        if results.pvalues[i] <= 0.05:
+            features_list.append(model.exog_names[i])
+            
+    models_dict = {
+            'Linear Regression': LinearRegression(),
+            'Logistic Regression':LogisticRegression(),
+            'Naive Bayes':GaussianNB(),
+            'SVM linear': svm.SVC(kernel='linear'),
+            'SVM rbf': svm.SVC(kernel='rbf'),
+    }
+
+    prediction_data = {} # store prediction for each model 
+
+    for model_name in models_dict:
+        X_train = df[features_list]
+        X_test = game_df[features_list]
+        y_train = df['WL_x']
+
+        m = models_dict[model_name]
+
+        if model_name == 'Linear Regression':
+            y_train = df['PLUS_MINUS_x']
+
+        m.fit(X_train, y_train)
+        prediction = m.predict(X_test)
+
+        if model_name == 'Linear Regression':
+            if prediction[0] > 0:
+                prediction[0] = 1
+            else:
+                prediction[0] = 0
+
+        prediction_data[model_name] = prediction[0]
+
+    final_prediction = 0
+    for k, v in prediction_data.items():
+        final_prediction += v
+
+    final_prediction = round(final_prediction / 5)
+    return final_prediction
 
 def store_game_df(file, game_df):
     """
@@ -131,9 +190,7 @@ def store_game_df(file, game_df):
     :rtype: boolean
     """
     df = pd.read_csv(file)
-    print(df)
     df = pd.concat([df,game_df], ignore_index=True)
-    print("file_df:",df)
     df.to_csv(file,index=False)
     return
 
@@ -149,15 +206,14 @@ def process_upcoming_games():
     :rtype: boolean
     """
     matchups, game_date = get_matchups()
+    df = pd.read_csv("data/season_history.csv")
     for game in matchups:
         away = game[0:3]
         home = game[15:18]
         game_df = get_team_stats(home, away)
-        print(game_df)
-        prediction = predict(game_inputs)
+        prediction = predict(df, game_df)
         game_df['Prediction'] = [prediction]
         store_game_df('data/upcoming_games.csv', game_df)
     return 
 
-# print(get_team_stats('IND', 'GSW'))
-# process_upcoming_games()
+process_upcoming_games()
