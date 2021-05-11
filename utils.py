@@ -34,7 +34,7 @@ def populate_team_stats(nba_teams):
     print("Successfully populated team stats.")
     return
 
-def create_json_file():
+def create_team_stats_json():
     print("Creating json file,,,")
     nba_teams = get_nba_teams()
     populate_team_stats(nba_teams)
@@ -43,4 +43,12 @@ def create_json_file():
     print("Successfully created json file.")
     return
 
-create_json_file()
+def create_upcoming_games_csv():
+    df = pd.DataFrame(columns=["HOME_TEAM", "AVG_PTS_x", "AVG_AST_x", "AVG_OREB_x", "AVG_DREB_x", "OFFRATE_x", "DEFRATE_x", "ELO_x", "AWAY_TEAM", "AVG_PTS_y", "AVG_AST_y", "AVG_OREB_y", "AVG_DREB_y", "OFFRATE_y", "DEFRATE_y", "ELO_y", "DIS_PTS", "DIS_AST", "DIS_OREB", "DIS_DREB", "DIS_OFFRATE", "DIS_DEFRATE", "DIS_ELO"])
+    df.reset_index(drop=True,inplace=True)
+    df.to_csv("data/upcoming_games.csv", index=False)
+    return
+
+# drivers
+# create_team_stats_json()
+create_upcoming_games_csv()

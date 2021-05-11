@@ -99,10 +99,10 @@ def get_team_stats(home_team, away_team):
     df["DIS_OFFRATE"] = [df["OFFRATE_x"][0] - df["OFFRATE_y"][0]]
     df["DIS_DEFRATE"] = [df["DEFRATE_x"][0] - df["DEFRATE_y"][0]]
     df["DIS_ELO"] = [df["ELO_x"][0] - df["ELO_y"][0]]
-    
+        
     return df
 
-def predict(game):
+def predict(game_df):
     """
     Predict outcome of game for home team based on 8 features.
 
@@ -110,6 +110,43 @@ def predict(game):
     :rtype: integer
     """
     
+    return prediction
+
+def store_game_df(file, game_df):
+    """
+    Store game_df in either "upcoming_games" or "games_history" depending on file parameter.
+
+    :return: True/False for successful/unsuccessful storing status
+    :rtype: boolean
+    """
+    df = pd.read_csv(file)
+    print(df)
+    df = pd.concat([df,game_df], ignore_index=True)
+    print("file_df:",df)
+    df.to_csv(file,index=False)
+    return
+
+def process_upcoming_games():
+    """
+    Full processing of upcoming games:
+    1. Get matchups
+    2. Get team stats
+    3. Make predictions
+    4. Store predictions
+
+    :return: True/False for successful/unsuccessful processing status
+    :rtype: boolean
+    """
+    matchups, game_date = get_matchups()
+    for game in matchups:
+        away = game[0:3]
+        home = game[15:18]
+        game_df = get_team_stats(home, away)
+        print(game_df)
+        prediction = predict(game_inputs)
+        game_df['Prediction'] = [prediction]
+        store_game_df('data/upcoming_games.csv', game_df)
+    return 
 
 def update_team_stats(team, game_result):
     """
@@ -118,7 +155,7 @@ def update_team_stats(team, game_result):
     :return: True/False for succesful/unsuccessful update status 
     :rtype: boolean
     """
-    
     return
 
-print(get_team_stats('IND', 'GSW'))
+# print(get_team_stats('IND', 'GSW'))
+# process_upcoming_games()
