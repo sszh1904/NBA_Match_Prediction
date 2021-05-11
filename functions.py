@@ -3,7 +3,18 @@ import requests
 import pandas as pd
 import json
 
-# Getting next day matchups and adding it to "upcoming_games.json"
+
+
+def update_team_stats(team, game_result):
+    """
+    Update team stats based on retrieved game results.
+
+    :return: True/False for succesful/unsuccessful update status 
+    :rtype: boolean
+    """
+    return
+
+# Getting next day matchups, processing them and storing it in "upcoming_games.csv"
 def get_matchups():
     """
     Retrieves all the matchups from ESPN website for next day games.
@@ -147,15 +158,6 @@ def process_upcoming_games():
         game_df['Prediction'] = [prediction]
         store_game_df('data/upcoming_games.csv', game_df)
     return 
-
-def update_team_stats(team, game_result):
-    """
-    Update team stats based on retrieved game results.
-
-    :return: True/False for succesful/unsuccessful update status 
-    :rtype: boolean
-    """
-    return
 
 # print(get_team_stats('IND', 'GSW'))
 # process_upcoming_games()
