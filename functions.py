@@ -1,6 +1,10 @@
+import pandas as pd
+import datetime
+from nba_api.stats.static import teams
+from nba_api.stats.endpoints import leaguegamefinder
+
 from bs4 import BeautifulSoup
 import requests
-import pandas as pd
 import json
 
 import statsmodels.api as sm
@@ -13,6 +17,66 @@ from sklearn import svm
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import accuracy_score,roc_curve,auc,recall_score,f1_score,precision_score,classification_report,confusion_matrix,auc
 
+# Getting yesterday's games data, processing them, merging them with games prediction data, then adding it to "season_history.csv"
+def extract_ytd_games():
+    """
+    Retrieve yesterday's games data (US timing) and clean it.
+
+    :return: Yesterday's cleaned games data
+    :rtype: df
+    """
+    yesterday = datetime.datetime.now() - datetime.timedelta(hours=36)  # based on US timezone
+    ytd_date = yesterday.date().strftime("%Y-%m-%d")   # convert to string format
+    
+    nba_teams = pd.DataFrame(teams.get_teams())
+    team_ids = nba_teams['id'].unique()
+
+    df = pd.DataFrame()
+    for team_id in team_ids:
+        gamefinder = leaguegamefinder.LeagueGameFinder(team_id_nullable=team_id)
+        games = gamefinder.get_data_frames()[0]
+        games = games[games['GAME_DATE'] == ytd_date]
+        df = df.append(games)
+    
+    df['length'] = df['MATCHUP'].str.len()
+    df.sort_values('length', inplace=True)
+    df.drop(columns=['length'], inplace=True)
+    df_combined = df.merge(df, on='GAME_ID')
+    df_combined = df_combined.drop(df_combined[df_combined['TEAM_ID_x'] == df_combined['TEAM_ID_y']].index)
+    df_combined = df_combined.iloc[1:].iloc[::2]
+    df_combined.reset_index(drop=True, inplace=True)
+    df_combined.drop(columns=["SEASON_ID_x", "TEAM_ID_x", "SEASON_ID_y", "TEAM_ID_y", "MATCHUP_x", "MATCHUP_y"],inplace=True)
+    df_combined = df_combined.replace(['W','L'], [int(1), int(0)]) # win = 1, lose = 0
+    
+    return df_combined
+
+def merge_prediction_results(results_df, predictions_df):
+    """
+    Merge game results data with game prediction data.
+
+    :return: Merged game data
+    :rtype: df
+    """
+    predictions_df.rename(columns = {"HOME_TEAM":"TEAM_ABBREVIATION_x"}, inplace=True)
+    predictions_df.drop(columns = "AWAY_TEAM")
+    merged_df = pd.merge(results_df, predictions_df, on="TEAM_ABBREVIATION_x")
+    return merged_df
+
+def process_ytd_games():
+    """
+    Full processing of yesterday's games:
+    1. Extract game data
+    2. Merge with prediction
+    3. Add to season history csv file
+
+    :return: True/False for successful/unsuccessful processing status
+    :rtype: boolean
+    """
+    results_df = extract_ytd_games()
+    predictions_df = pd.read_csv("data/upcoming_games.csv")
+    merged_df = merge_prediction_results(results_df, predictions_df)
+    print(merged_df)
+    return
 
 def update_team_stats(team, game_result):
     """
@@ -218,5 +282,5 @@ def process_upcoming_games():
 
 
 # ------------------------------------ DRIVERS ------------------------------------------------------------------------
-
+print(extract_ytd_games())
 # process_upcoming_games()
