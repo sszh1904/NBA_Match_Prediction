@@ -86,11 +86,8 @@ def clean_api_data(df):
 
 def create_season_history_csv():
     print("Creating season history csv file...")
-    # df = extract_nba_api()
-    df = pd.read_csv("data/nba_api_raw.csv")
-    print(df.head())
+    df = extract_nba_api()
     df = clean_api_data(df)
-    print(df.head())
     df['GAME_NO_x'] = 0
     df['GAME_NO_y'] = 0
     df['DIS_PTS'] = 0
