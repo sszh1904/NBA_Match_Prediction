@@ -296,34 +296,40 @@ def update_cPTS_ALLOWED(team_stats, team_x, team_y, pts_y, pts_x):
     return team_stats[team_x]['cPTS_ALLOWED'], team_stats[team_y]['cPTS_ALLOWED']
 
 def update_AVG_PTS(team_stats, team_x, team_y, GAME_NO_x, GAME_NO_y, cPTS_x, cPTS_y):
+    dis = update_DIS_PTS(team_stats, team_x, team_y)
     team_stats[team_x]['AVG_PTS'] = round(cPTS_x / GAME_NO_x, 2)
     team_stats[team_y]['AVG_PTS'] = round(cPTS_y / GAME_NO_y, 2)
-    return team_stats[team_x]['AVG_PTS'], team_stats[team_y]['AVG_PTS']
+    return dis, team_stats[team_x]['AVG_PTS'], team_stats[team_y]['AVG_PTS']
 
 def update_AVG_AST(team_stats, team_x, team_y, GAME_NO_x, GAME_NO_y, cAST_x, cAST_y):
+    dis = update_DIS_AST(team_stats, team_x, team_y)
     team_stats[team_x]['AVG_AST'] = round(cAST_x / GAME_NO_x, 2)
     team_stats[team_y]['AVG_AST'] = round(cAST_y / GAME_NO_y, 2)
-    return team_stats[team_x]['AVG_AST'], team_stats[team_y]['AVG_AST']
+    return dis, team_stats[team_x]['AVG_AST'], team_stats[team_y]['AVG_AST']
 
 def update_AVG_OREB(team_stats, team_x, team_y, GAME_NO_x, GAME_NO_y, cOREB_x, cOREB_y):
+    dis = update_DIS_OREB(team_stats, team_x, team_y)
     team_stats[team_x]['AVG_OREB'] = round(cOREB_x/ GAME_NO_x, 2)
     team_stats[team_y]['AVG_OREB'] = round(cOREB_y/ GAME_NO_y, 2)
-    return team_stats[team_x]['AVG_OREB'], team_stats[team_y]['AVG_OREB']
+    return dis, team_stats[team_x]['AVG_OREB'], team_stats[team_y]['AVG_OREB']
 
 def update_AVG_DREB(team_stats, team_x, team_y, GAME_NO_x, GAME_NO_y, cDREB_x, cDREB_y):
+    dis = update_DIS_DREB(team_stats, team_x, team_y)
     team_stats[team_x]['AVG_DREB'] = round(cDREB_x / GAME_NO_x, 2)
     team_stats[team_y]['AVG_DREB'] = round(cDREB_y / GAME_NO_y, 2)
-    return team_stats[team_x]['AVG_DREB'], team_stats[team_y]['AVG_DREB']
+    return dis, team_stats[team_x]['AVG_DREB'], team_stats[team_y]['AVG_DREB']
 
 def update_OFF_EFF(team_stats, team_x, team_y, cPTS_x, cPTS_y, cFGA_x, cFGA_y, cOREB_x, cOREB_y, cTO_x, cTO_y, cFTA_x, cFTA_y):
+    dis = update_DIS_OFF_EFF(team_stats, team_x, team_y)
     team_stats[team_x]['OFF_EFF'] = round(cPTS_x / (cFGA_x - cOREB_x + cTO_x + (0.4 * cFTA_x)) * 100, 2)
     team_stats[team_y]['OFF_EFF'] = round(cPTS_y / (cFGA_y - cOREB_y + cTO_y + (0.4 * cFTA_y)) * 100, 2)
-    return team_stats[team_x]['OFF_EFF'], team_stats[team_y]['OFF_EFF']
+    return dis, team_stats[team_x]['OFF_EFF'], team_stats[team_y]['OFF_EFF']
 
 def update_DEF_EFF(team_stats, team_x, team_y, cPTS_ALLOWED_x, cPTS_ALLOWED_y, cFGA_x, cFGA_y, cOREB_x, cOREB_y, cTO_x, cTO_y, cFTA_x, cFTA_y):
+    dis = update_DIS_DEF_EFF(team_stats, team_x, team_y)
     team_stats[team_x]['DEF_EFF'] = round(cPTS_ALLOWED_x / (cFGA_x - cOREB_x + cTO_x + (0.4 * cFTA_x)) * 100, 2)
     team_stats[team_y]['DEF_EFF'] = round(cPTS_ALLOWED_y / (cFGA_y - cOREB_y + cTO_y + (0.4 * cFTA_y)) * 100, 2)
-    return team_stats[team_x]['DEF_EFF'], team_stats[team_y]['DEF_EFF']
+    return dis, team_stats[team_x]['DEF_EFF'], team_stats[team_y]['DEF_EFF']
 
 def update_EFG(team_stats, team_x, team_y, cFGM_x, cFGM_y, cFG3M_x, cFG3M_y, cFGA_x, cFGA_y):
     team_stats[team_x]['EFG'] = round((cFGM_x + 0.5 * cFG3M_x) / cFGA_x, 2)
@@ -331,6 +337,8 @@ def update_EFG(team_stats, team_x, team_y, cFGM_x, cFGM_y, cFG3M_x, cFG3M_y, cFG
     return team_stats[team_x]['EFG'], team_stats[team_y]['EFG']
 
 def update_ELO(team_stats, team_x, team_y, WL_x, K_FACTOR=20): 
+    dis = update_DIS_ELO(team_stats, team_x, team_y)
+
     # K is constant value for multiplier, affects the sensitivity to recent games
     P_team = 1 / (1 + 10 ** ((team_stats[team_y]['ELO'] - team_stats[team_x]['ELO'])/400)) # probability of team winning
     if WL_x == 1:
@@ -341,4 +349,32 @@ def update_ELO(team_stats, team_x, team_y, WL_x, K_FACTOR=20):
     team_stats[team_x]['ELO'] += elo_change
     team_stats[team_y]['ELO'] -= elo_change
 
-    return team_stats[team_x]['ELO'], team_stats[team_y]['ELO']
+    return dis, team_stats[team_x]['ELO'], team_stats[team_y]['ELO']
+
+def update_DIS_PTS(team_stats, team_x, team_y):
+    dis = team_stats[team_x]['AVG_PTS'] - team_stats[team_y]['AVG_PTS']
+    return dis
+
+def update_DIS_AST(team_stats, team_x, team_y):
+    dis = team_stats[team_x]['AVG_AST'] - team_stats[team_y]['AVG_AST']
+    return dis
+
+def update_DIS_OREB(team_stats, team_x, team_y):
+    dis = team_stats[team_x]['AVG_OREB'] - team_stats[team_y]['AVG_OREB']
+    return dis
+
+def update_DIS_DREB(team_stats, team_x, team_y):
+    dis = team_stats[team_x]['AVG_DREB'] - team_stats[team_y]['AVG_DREB']
+    return dis
+
+def update_DIS_OFF_EFF(team_stats, team_x, team_y):
+    dis = team_stats[team_x]['OFF_EFF'] - team_stats[team_y]['OFF_EFF']
+    return dis
+
+def update_DIS_DEF_EFF(team_stats, team_x, team_y):
+    dis = team_stats[team_x]['DEF_EFF'] - team_stats[team_y]['DEF_EFF']
+    return dis
+
+def update_DIS_ELO(team_stats, team_x, team_y):
+    dis = team_stats[team_x]['ELO'] - team_stats[team_y]['ELO']
+    return dis
