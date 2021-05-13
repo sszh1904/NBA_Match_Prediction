@@ -378,3 +378,8 @@ def update_DIS_DEF_EFF(team_stats, team_x, team_y):
 def update_DIS_ELO(team_stats, team_x, team_y):
     dis = team_stats[team_x]['ELO'] - team_stats[team_y]['ELO']
     return dis
+
+def update_HOME_COURT(matchup):
+    if '@' in matchup:
+        return 0, 1
+    return 1, 0
