@@ -50,6 +50,67 @@ def extract_ytd_games():
     
     return df_combined
 
+def update_team_stats(game_result):
+    """
+    Update team stats based on retrieved game results.
+
+    :return: True/False for succesful/unsuccessful update status 
+    :rtype: boolean
+    """
+    with open("data/team_stats.json", 'r') as jsonFile:
+        nba_teams = json.load(jsonFile)
+    
+    team_x = game_result["TEAM_ABBREVIATION_x"]
+    team_y = game_result["TEAM_ABBREVIATION_y"]
+        
+    nba_teams[team_x]['cPTS'] += game_result['PTS_x']
+    nba_teams[team_x]['cAST'] += game_result['AST_x']
+    nba_teams[team_x]['cOREB'] += game_result['OREB_x']
+    nba_teams[team_x]['cDREB'] += game_result['DREB_x']
+    nba_teams[team_x]['cFGA'] += game_result['FGA_x']
+    nba_teams[team_x]['cTO'] += game_result['TOV_x']
+    nba_teams[team_x]['cFTA'] += game_result['FTA_x']
+    nba_teams[team_x]['cPTS_ALLOWED'] += game_result['PTS_y']
+
+    nba_teams[team_x]['AVG_PTS'] = nba_teams[team_x]['cPTS'] /nba_teams[team_x]["GAME_NO"]
+    nba_teams[team_x]['AVG_AST'] = nba_teams[team_x]['cAST']/nba_teams[team_x]["GAME_NO"]
+    nba_teams[team_x]['AVG_OREB'] = nba_teams[team_x]['cOREB']/nba_teams[team_x]["GAME_NO"]
+    nba_teams[team_x]['AVG_DREB'] = nba_teams[team_x]['cDREB']/nba_teams[team_x]["GAME_NO"]
+
+    nba_teams[team_y]['cPTS'] += game_result['PTS_y']
+    nba_teams[team_y]['cAST'] += game_result['AST_y']
+    nba_teams[team_y]['cOREB'] += game_result['OREB_y']
+    nba_teams[team_y]['cDREB'] += game_result['DREB_y']
+    nba_teams[team_y]['cFGA'] += game_result['FGA_y']
+    nba_teams[team_y]['cTO'] += game_result['TOV_y']
+    nba_teams[team_y]['cFTA'] += game_result['FTA_y']
+    nba_teams[team_y]['cPTS_ALLOWED'] += game_result['PTS_x']
+
+    nba_teams[team_y]['AVG_PTS'] = nba_teams[team_y]['cPTS'] /nba_teams[team_y]["GAME_NO"]
+    nba_teams[team_y]['AVG_AST'] = nba_teams[team_y]['cAST']/nba_teams[team_y]["GAME_NO"]
+    nba_teams[team_y]['AVG_OREB'] = nba_teams[team_y]['cOREB']/nba_teams[team_y]["GAME_NO"]
+    nba_teams[team_y]['AVG_DREB'] = nba_teams[team_y]['cDREB']/nba_teams[team_y]["GAME_NO"]
+
+#       update OFF DEF ratings of both teams
+    nba_teams[team_x]['OFF_EFF'] = round(nba_teams[team_x]["cPTS"] / (nba_teams[team_x]["cFGA"] - nba_teams[team_x]["cOREB"] + nba_teams[team_x]["cTO"] + (0.4 * nba_teams[team_x]["cFTA"])) * 100, 2)
+    nba_teams[team_y]['OFF_EFF'] = round(nba_teams[team_y]["cPTS"] / (nba_teams[team_y]["cFGA"] - nba_teams[team_y]["cOREB"] + nba_teams[team_y]["cTO"] + (0.4 * nba_teams[team_y]["cFTA"])) * 100, 2)
+    nba_teams[team_x]['DEF_EFF'] = round(nba_teams[team_x]["cPTS_ALLOWED"] / (nba_teams[team_x]["cFGA"] - nba_teams[team_x]["cOREB"] + nba_teams[team_x]["cTO"] + (0.4 * nba_teams[team_x]["cFTA"])) * 100, 2)
+    nba_teams[team_y]['DEF_EFF'] = round(nba_teams[team_y]["cPTS_ALLOWED"] / (nba_teams[team_y]["cFGA"] - nba_teams[team_y]["cOREB"] + nba_teams[team_y]["cTO"] + (0.4 * nba_teams[team_y]["cFTA"])) * 100, 2)
+
+#       update ELO of both teams
+    K_FACTOR = 20       # constant value for multiplier
+
+    P_team = 1/(1 + 10 ** ((nba_teams[team_y]['ELO'] - nba_teams[team_x]['ELO'])/400))      # probability of team winning
+
+    if game_result['WL_x'] == 1:
+        elo_change = K_FACTOR * (1 - P_team)        # formula for change in elo if team 1 wins
+    else:
+        elo_change = K_FACTOR * (0 - P_team)        # formula for change in elo if team 1 loses
+
+    nba_teams[team_x]['ELO'] += elo_change
+    nba_teams[team_y]['ELO'] -= elo_change
+    return
+
 def merge_prediction_results(results_df, predictions_df):
     """
     Merge game results data with game prediction data.
@@ -62,29 +123,36 @@ def merge_prediction_results(results_df, predictions_df):
     merged_df = pd.merge(results_df, predictions_df, on="TEAM_ABBREVIATION_x")
     return merged_df
 
+def store_game_df(file, game_df):
+    """
+    Store game_df in either "upcoming_games" or "games_history" depending on file parameter.
+
+    :return: True/False for successful/unsuccessful storing status
+    :rtype: boolean
+    """
+    df = pd.read_csv(file)
+    df = pd.concat([df,game_df], ignore_index=True)
+    df.to_csv(file,index=False)
+    return
+
 def process_ytd_games():
     """
     Full processing of yesterday's games:
     1. Extract game data
-    2. Merge with prediction
-    3. Add to season history csv file
+    2. Update team stats
+    3. Merge with prediction
+    4. Add to season history csv file
 
     :return: True/False for successful/unsuccessful processing status
     :rtype: boolean
     """
     results_df = extract_ytd_games()
+    for index, row in results_df.iterrows():
+        update_team_stats(row)
     predictions_df = pd.read_csv("data/upcoming_games.csv")
     merged_df = merge_prediction_results(results_df, predictions_df)
     print(merged_df)
-    return
-
-def update_team_stats(team, game_result):
-    """
-    Update team stats based on retrieved game results.
-
-    :return: True/False for succesful/unsuccessful update status 
-    :rtype: boolean
-    """
+    store_game_df("data/season_history.csv",merged_df)
     return
 
 # Getting next day matchups, processing them and storing it in "upcoming_games.csv"
@@ -163,8 +231,8 @@ def get_team_stats(home_team, away_team):
     df["AVG_AST_x"] = [data[home_team]["AVG_AST"]]
     df["AVG_OREB_x"] = [data[home_team]["AVG_OREB"]]
     df["AVG_DREB_x"] = [data[home_team]["AVG_DREB"]]
-    df["OFFRATE_x"] = [data[home_team]["OFFRATE"]]
-    df["DEFRATE_x"] = [data[home_team]["DEFRATE"]]
+    df["OFF_EFF_x"] = [data[home_team]["OFF_EFF"]]
+    df["DEF_EFF_x"] = [data[home_team]["DEF_EFF"]]
     df["ELO_x"] = [data[home_team]["ELO"]]
     
     df["AWAY_TEAM"] = [away_team]
@@ -172,16 +240,16 @@ def get_team_stats(home_team, away_team):
     df["AVG_AST_y"] = [data[away_team]["AVG_AST"]]
     df["AVG_OREB_y"] = [data[away_team]["AVG_OREB"]]
     df["AVG_DREB_y"] = [data[away_team]["AVG_DREB"]]
-    df["OFFRATE_y"] = [data[away_team]["OFFRATE"]]
-    df["DEFRATE_y"] = [data[away_team]["DEFRATE"]]
+    df["OFF_EFF_y"] = [data[away_team]["OFF_EFF"]]
+    df["DEF_EFF_y"] = [data[away_team]["DEF_EFF"]]
     df["ELO_y"] = [data[away_team]["ELO"]]
     
     df["DIS_PTS"] = [df["AVG_PTS_x"][0] - df["AVG_PTS_y"][0]]
     df["DIS_AST"] = [df["AVG_AST_x"][0] - df["AVG_AST_y"][0]]
     df["DIS_OREB"] = [df["AVG_OREB_x"][0] - df["AVG_OREB_y"][0]]
     df["DIS_DREB"] = [df["AVG_DREB_x"][0] - df["AVG_DREB_y"][0]]
-    df["DIS_OFFRATE"] = [df["OFFRATE_x"][0] - df["OFFRATE_y"][0]]
-    df["DIS_DEFRATE"] = [df["DEFRATE_x"][0] - df["DEFRATE_y"][0]]
+    df["DIS_OFF_EFF"] = [df["OFF_EFF_x"][0] - df["OFF_EFF_y"][0]]
+    df["DIS_DEF_EFF"] = [df["DEF_EFF_x"][0] - df["DEF_EFF_y"][0]]
     df["DIS_ELO"] = [df["ELO_x"][0] - df["ELO_y"][0]]
         
     return df
@@ -193,7 +261,7 @@ def predict(df, game_df):
     :return: Predicted outcome - 1/0
     :rtype: integer
     """
-    features_list = ['DIS_ELO', 'DIS_OFFRATE', 'DIS_DEFRATE', 'DIS_PTS', 'DIS_AST', 'DIS_OREB', 'DIS_DREB']
+    features_list = ['DIS_ELO', 'DIS_OFF_EFF', 'DIS_DEF_EFF', 'DIS_PTS', 'DIS_AST', 'DIS_OREB', 'DIS_DREB']
     target = 'WL_x'
 
     # Creating our independent and dependent variables
@@ -246,18 +314,6 @@ def predict(df, game_df):
     final_prediction = round(final_prediction / 5)
     return final_prediction
 
-def store_game_df(file, game_df):
-    """
-    Store game_df in either "upcoming_games" or "games_history" depending on file parameter.
-
-    :return: True/False for successful/unsuccessful storing status
-    :rtype: boolean
-    """
-    df = pd.read_csv(file)
-    df = pd.concat([df,game_df], ignore_index=True)
-    df.to_csv(file,index=False)
-    return
-
 def process_upcoming_games():
     """
     Full processing of upcoming games:
@@ -282,5 +338,5 @@ def process_upcoming_games():
 
 
 # ------------------------------------ DRIVERS ------------------------------------------------------------------------
-print(extract_ytd_games())
-# process_upcoming_games()
+# print(extract_ytd_games())
+process_upcoming_games()

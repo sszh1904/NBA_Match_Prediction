@@ -4,8 +4,8 @@ Automated Daily Routine @12am US timing:
 1. Get game results for previous day
 2. For each game:
 a. Extract prediction
-b. Combine results with prediction (df)
-c. Update team stats
+b. Update team stats
+c. Combine results with prediction (df)
 3. Append df into "games history"
 4. Reset "upcoming games"
 5. Get matchups for today
