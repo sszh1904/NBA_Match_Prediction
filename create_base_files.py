@@ -9,8 +9,6 @@ from sklearn.linear_model import LinearRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn import svm
 
-team_stats = {}
-
 def get_nba_teams():
     print("Retrieving NBA teams...")
     nba_teams = pd.DataFrame(teams.get_teams())
@@ -20,6 +18,7 @@ def get_nba_teams():
 
 def populate_team_stats(nba_teams):
     print("Populating team stats...")
+    team_stats = {}
     for team in nba_teams:
         team_stats[team] = {
             "GAME_NO": 0,
@@ -40,10 +39,10 @@ def populate_team_stats(nba_teams):
             "ELO": 1500
         }
     print("Successfully populated team stats.")
-    return
+    return team_stats
 
-def create_team_stats_json():
-    print("Creating json file,,,")
+def create_team_stats_json(team_stats):
+    print("Creating json file...")
     nba_teams = get_nba_teams()
     populate_team_stats(nba_teams)
     with open('data/team_stats.json', 'w') as json_file:
