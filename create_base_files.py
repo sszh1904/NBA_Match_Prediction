@@ -54,7 +54,7 @@ def create_team_stats_json():
 def create_upcoming_games_csv():
     print("Creating csv file...")
     df = pd.DataFrame(columns=["HOME_TEAM", "AVG_PTS_x", "AVG_AST_x", "AVG_OREB_x", "AVG_DREB_x", "OFF_EFF_x", "DEF_EFF_x", "ELO_x", "AWAY_TEAM", "AVG_PTS_y", "AVG_AST_y", "AVG_OREB_y", "AVG_DREB_y", "OFF_EFF_y", "DEF_EFF_y", "ELO_y", "DIS_PTS", "DIS_AST", "DIS_OREB", "DIS_DREB", "DIS_OFF_EFF", "DIS_DEF_EFF", "DIS_ELO"])
-    df.reset_index(drop=True,inplace=True)
+    df.reset_index(drop=True, inplace=True)
     df.to_csv("data/upcoming_games.csv", index=False)
     print("Successfully created csv file.")
     return
@@ -86,7 +86,7 @@ def clean_api_data(df):
     df_combined = df_combined.drop(df_combined[df_combined['TEAM_ID_x'] == df_combined['TEAM_ID_y']].index)
     df_combined = df_combined.iloc[1:].iloc[::2]
     df_combined.reset_index(drop=True,inplace=True)
-    df_combined.drop(columns=["SEASON_ID_x", "TEAM_ID_x", "SEASON_ID_y", "TEAM_ID_y", "MATCHUP_x", "MATCHUP_y"],inplace=True)
+    df_combined.drop(columns=["SEASON_ID_x", "TEAM_ID_x", "SEASON_ID_y", "TEAM_ID_y", "MATCHUP_x", "MATCHUP_y"], inplace=True)
     df_combined = df_combined.replace(['W','L'], [int(1), int(0)]) # win = 1, lose = 0
     
     print("Successfully cleaned data.")
@@ -160,7 +160,7 @@ def create_season_history_csv():
     df['DIS_ELO'] = 0
     
     df['GAME_DATE_x'] = pd.to_datetime(df['GAME_DATE_x']) # change GAME_DATE to datetime type
-    df = df.sort_values(by = ["GAME_DATE_x","GAME_ID"], ascending = True)
+    df = df.sort_values(by = ["GAME_DATE_x", "GAME_ID"], ascending = True)
     df.reset_index(drop=True, inplace=True)
     
     
@@ -242,7 +242,7 @@ def create_season_history_csv():
         nba_teams[team_y]['OFF_EFF'] = round(nba_teams[team_y]["cPTS"] / (nba_teams[team_y]["cFGA"] - nba_teams[team_y]["cOREB"] + nba_teams[team_y]["cTO"] + (0.4 * nba_teams[team_y]["cFTA"])) * 100, 2)
         nba_teams[team_x]['DEF_EFF'] = round(nba_teams[team_x]["cPTS_ALLOWED"] / (nba_teams[team_x]["cFGA"] - nba_teams[team_x]["cOREB"] + nba_teams[team_x]["cTO"] + (0.4 * nba_teams[team_x]["cFTA"])) * 100, 2)
         nba_teams[team_y]['DEF_EFF'] = round(nba_teams[team_y]["cPTS_ALLOWED"] / (nba_teams[team_y]["cFGA"] - nba_teams[team_y]["cOREB"] + nba_teams[team_y]["cTO"] + (0.4 * nba_teams[team_y]["cFTA"])) * 100, 2)
-                                 
+
     #       update ELO of both teams
         K_FACTOR = 20       # constant value for multiplier
 
