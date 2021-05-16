@@ -25,8 +25,8 @@ def extract_ytd_games():
     :return: Yesterday's cleaned games data
     :rtype: df
     """
-    yesterday = datetime.datetime.now() - datetime.timedelta(hours=36)  # based on US timezone
-    ytd_date = yesterday.date().strftime("%Y-%m-%d")   # convert to string format
+    yesterday = datetime.datetime.now() - datetime.timedelta(hours=72)  # based on US timezone
+    ytd_date = yesterday.date().strftime("%Y-%m-%d")   # convert to string format'
     
     nba_teams = pd.DataFrame(teams.get_teams())
     team_ids = nba_teams['id'].unique()
@@ -50,7 +50,7 @@ def extract_ytd_games():
     
     return df_combined
 
-def update_team_stats(game_result):
+def update_team_stats(game_result, results_df):
     """
     Update team stats based on retrieved game results.
 
@@ -62,7 +62,8 @@ def update_team_stats(game_result):
     
     team_x = game_result["TEAM_ABBREVIATION_x"]
     team_y = game_result["TEAM_ABBREVIATION_y"]
-        
+    
+    nba_teams[team_x]['GAME_NO'] += 1
     nba_teams[team_x]['cPTS'] += game_result['PTS_x']
     nba_teams[team_x]['cAST'] += game_result['AST_x']
     nba_teams[team_x]['cOREB'] += game_result['OREB_x']
@@ -77,6 +78,7 @@ def update_team_stats(game_result):
     nba_teams[team_x]['AVG_OREB'] = nba_teams[team_x]['cOREB']/nba_teams[team_x]["GAME_NO"]
     nba_teams[team_x]['AVG_DREB'] = nba_teams[team_x]['cDREB']/nba_teams[team_x]["GAME_NO"]
 
+    nba_teams[team_y]['GAME_NO'] += 1
     nba_teams[team_y]['cPTS'] += game_result['PTS_y']
     nba_teams[team_y]['cAST'] += game_result['AST_y']
     nba_teams[team_y]['cOREB'] += game_result['OREB_y']
@@ -109,6 +111,10 @@ def update_team_stats(game_result):
 
     nba_teams[team_x]['ELO'] += elo_change
     nba_teams[team_y]['ELO'] -= elo_change
+    
+#       add game_no columns for both team
+    results_df['GAME_NO_x'] = nba_teams[team_x]['GAME_NO']
+    results_df['GAME_NO_y'] = nba_teams[team_y]['GAME_NO']
     return
 
 def merge_prediction_results(results_df, predictions_df):
@@ -119,7 +125,7 @@ def merge_prediction_results(results_df, predictions_df):
     :rtype: df
     """
     predictions_df.rename(columns = {"HOME_TEAM":"TEAM_ABBREVIATION_x"}, inplace=True)
-    predictions_df.drop(columns = "AWAY_TEAM")
+    predictions_df.drop(columns = "AWAY_TEAM", inplace=True)
     merged_df = pd.merge(results_df, predictions_df, on="TEAM_ABBREVIATION_x")
     return merged_df
 
@@ -148,10 +154,9 @@ def process_ytd_games():
     """
     results_df = extract_ytd_games()
     for index, row in results_df.iterrows():
-        update_team_stats(row)
+        update_team_stats(row, results_df)
     predictions_df = pd.read_csv("data/upcoming_games.csv")
     merged_df = merge_prediction_results(results_df, predictions_df)
-    print(merged_df)
     store_game_df("data/season_history.csv",merged_df)
     return
 
@@ -175,7 +180,9 @@ def get_matchups():
     counter = 0
     for game in game_containers:
         try:
-            if 'time' in game.thead.text:
+            if game.thead == None:
+                return matchup_list, 'No upcoming games.'
+            elif 'time' in game.thead.text:
                 game_matchup = game.tbody
                 game_date = soup.findAll('div', {'id':'sched-container'})[0].findAll('h2')[counter].text
         except AttributeError:
@@ -184,15 +191,9 @@ def get_matchups():
 
         if game_date != '':
             break
-    if game_matchup == '':
-        game_date = 'No upcoming games.'
-        return matchup_list,game_date
-        
+  
     teams_playing = game_matchup.findAll('a', {'class':'team-name'})
-
-    # Not needed for our web app, but just filling it in here incase we need it
-    time_playing = game_matchup.findAll('td', {'data-behavior':'date_time'})
-
+    
     error_name = {
             "GS":"GSW",
             "SA":"SAS",
@@ -201,7 +202,7 @@ def get_matchups():
             "UTAH":"UTA",
             "NY":"NYK"
         }
-
+    
     for i in range(0,len(teams_playing),2):
         away = teams_playing[i].text.split()[-1]
         home = teams_playing[i+1].text.split()[-1]
@@ -261,20 +262,7 @@ def predict(df, game_df):
     :return: Predicted outcome - 1/0
     :rtype: integer
     """
-    features_list = ['DIS_ELO', 'DIS_OFF_EFF', 'DIS_DEF_EFF', 'DIS_PTS', 'DIS_AST', 'DIS_OREB', 'DIS_DREB']
-    target = 'WL_x'
-
-    # Creating our independent and dependent variables
-    x = df[features_list]
-    y = df['PLUS_MINUS_x']
-
-    model = sm.OLS(y,x)
-    results = model.fit()
-
-    features_list = []
-    for i in range(len(x.keys())):
-        if results.pvalues[i] <= 0.05:
-            features_list.append(model.exog_names[i])
+    features_list = ['DIS_ELO', 'DIS_OFF_EFF', 'DIS_DEF_EFF']
             
     models_dict = {
             'Linear Regression': LinearRegression(),
@@ -283,12 +271,13 @@ def predict(df, game_df):
             'SVM linear': svm.SVC(kernel='linear'),
             'SVM rbf': svm.SVC(kernel='rbf'),
     }
+    
+    X_train = df[features_list]
+    X_test = game_df[features_list]
 
     prediction_data = {} # store prediction for each model 
 
     for model_name in models_dict:
-        X_train = df[features_list]
-        X_test = game_df[features_list]
         y_train = df['WL_x']
 
         m = models_dict[model_name]
@@ -327,6 +316,8 @@ def process_upcoming_games():
     """
     matchups, game_date = get_matchups()
     df = pd.read_csv("data/season_history.csv")
+    df.drop(df[(df['GAME_NO_x'] == 1) | (df['GAME_NO_y'] == 1 )].index, inplace=True) # omit first games of all teams
+
     for game in matchups:
         away = game[0:3]
         home = game[15:18]
@@ -338,5 +329,6 @@ def process_upcoming_games():
 
 
 # ------------------------------------ DRIVERS ------------------------------------------------------------------------
-# print(extract_ytd_games())
-process_upcoming_games()
+# process_ytd_games()
+# process_upcoming_games()
+print(extract_ytd_games())

@@ -41,10 +41,10 @@ def populate_team_stats(nba_teams):
     print("Successfully populated team stats.")
     return team_stats
 
-def create_team_stats_json(team_stats):
+def create_team_stats_json():
     print("Creating json file...")
     nba_teams = get_nba_teams()
-    populate_team_stats(nba_teams)
+    team_stats = populate_team_stats(nba_teams)
     with open('data/team_stats.json', 'w') as json_file:
         json.dump(team_stats, json_file, indent=4)
     print("Successfully created json file.")
@@ -71,7 +71,7 @@ def extract_nba_api():
         main_df = main_df.append(games)
     
     main_df = main_df.sort_values('GAME_DATE',ascending=False)
-    main_df.reset_index(inplace=True)
+    main_df.reset_index(drop=True, inplace=True)
     print("Successfully extracted nba api data.")
     return main_df
 
@@ -92,19 +92,11 @@ def clean_api_data(df):
     return df_combined
 
 def predict_game(df, game_df):
-    features_list = ['DIS_ELO', 'DIS_OFF_EFF', 'DIS_DEF_EFF', 'DIS_PTS', 'DIS_AST', 'DIS_OREB', 'DIS_DREB']
+    features_list = ['DIS_ELO', 'DIS_OFF_EFF', 'DIS_DEF_EFF']
 
     # Creating our independent and dependent variables
     x = df[features_list]
     y = df['PLUS_MINUS_x']
-
-    model = sm.OLS(y,x)
-    results = model.fit()
-
-    features_list = []
-    for i in range(len(x.keys())):
-        if results.pvalues[i] <= 0.05:
-            features_list.append(model.exog_names[i])
 
     models_dict = {
             'Linear Regression': LinearRegression(),
@@ -115,10 +107,11 @@ def predict_game(df, game_df):
     }
 
     prediction_data = {} # store prediction for each model 
+    
+    X_train = df[features_list]
+    X_test = [game_df[features_list]]
 
     for model_name in models_dict:
-        X_train = df[features_list]
-        X_test = [game_df[features_list]]
         y_train = df['WL_x']
         
         m = models_dict[model_name]
@@ -161,8 +154,6 @@ def create_season_history_csv():
     df['GAME_DATE_x'] = pd.to_datetime(df['GAME_DATE_x']) # change GAME_DATE to datetime type
     df = df.sort_values(by = ["GAME_DATE_x", "GAME_ID"], ascending = True)
     df.reset_index(drop=True, inplace=True)
-    
-    
     
     with open("data/team_stats.json", 'r') as jsonFile:
         nba_teams = json.load(jsonFile)
@@ -254,9 +245,7 @@ def create_season_history_csv():
 
         nba_teams[team_x]['ELO'] += elo_change
         nba_teams[team_y]['ELO'] -= elo_change
-        
-    df.drop(df[(df['GAME_NO_x'] == 1) | (df['GAME_NO_y'] == 1 )].index, inplace=True) # omit first games of all teams
-    
+            
     with open("data/team_stats.json", 'w') as jsonFile:
         json.dump(nba_teams, jsonFile, indent=4)
     
@@ -267,6 +256,6 @@ def create_season_history_csv():
 
 # ------------------------------------ DRIVERS ------------------------------------------------------------------------
 
-# create_team_stats_json()
-# create_upcoming_games_csv()
-# create_season_history_csv()
+create_team_stats_json()
+create_upcoming_games_csv()
+create_season_history_csv()
