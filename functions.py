@@ -25,7 +25,7 @@ def extract_ytd_games():
     :return: Yesterday's cleaned games data
     :rtype: df
     """
-    yesterday = datetime.datetime.now() - datetime.timedelta(hours=72)  # based on US timezone
+    yesterday = datetime.datetime.now() - datetime.timedelta(hours=36)  # based on US timezone
     ytd_date = yesterday.date().strftime("%Y-%m-%d")   # convert to string format'
     
     nba_teams = pd.DataFrame(teams.get_teams())
@@ -125,8 +125,9 @@ def merge_prediction_results(results_df, predictions_df):
     :rtype: df
     """
     predictions_df.rename(columns = {"HOME_TEAM":"TEAM_ABBREVIATION_x"}, inplace=True)
-    predictions_df.drop(columns = "AWAY_TEAM", inplace=True)
+    predictions_df.drop(columns = ["AWAY_TEAM", "GAME_DATE_y", "TEAM_NAME_x", "TEAM_NAME_y"], inplace=True)
     merged_df = pd.merge(results_df, predictions_df, on="TEAM_ABBREVIATION_x")
+    merged_df.rename(columns = {"GAME_DATE_x": "GAME_DATE"}, inplace=True)
     return merged_df
 
 def store_game_df(file, game_df):
@@ -323,12 +324,11 @@ def process_upcoming_games():
         home = game[15:18]
         game_df = get_team_stats(home, away)
         prediction = predict(df, game_df)
-        game_df['Prediction'] = [prediction]
+        game_df['PREDICTION'] = [prediction]
         store_game_df('data/upcoming_games.csv', game_df)
     return 
 
 
 # ------------------------------------ DRIVERS ------------------------------------------------------------------------
-# process_ytd_games()
+process_ytd_games()
 # process_upcoming_games()
-print(extract_ytd_games())
