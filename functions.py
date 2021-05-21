@@ -330,5 +330,5 @@ def process_upcoming_games():
 
 
 # ------------------------------------ DRIVERS ------------------------------------------------------------------------
-process_ytd_games()
-# process_upcoming_games()
+# process_ytd_games()
+process_upcoming_games()
