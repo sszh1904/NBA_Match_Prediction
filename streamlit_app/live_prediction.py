@@ -65,7 +65,6 @@ def app():
         
         df = df.sort_values('GAME_DATE', ascending=True)
         df.reset_index(drop=True, inplace=True)
-        df.to_csv('test.csv')
         return df
 
     @st.cache
@@ -130,7 +129,6 @@ def app():
             day += 1
 
         return int(prediction)
-
 
 
     # Predict Button
