@@ -13,7 +13,7 @@ NBA_SEASONS = {
     '2020-21': {'start_date': '2020-12-22', 'end_date': '2021-05-16'}
 }
 
-NBA_TEAMS = ['Atlanta Hawks (ATL)', 'Boston Celtics (BOS)', 'Cleveland Cavaliers (CLE)', 'New Orleans Pelicans (NOP)', 'Chicago Bulls (CHI)', 'Dallas Mavericks (DAL)', 'Denver Nuggets (DEN)', 'Golden State Warriors (GSW)', 'Houston Rockets (HOU)', 'Los Angeles Clippers (LAC)', 'Los Angeles Lakers (LAL)', 'Miami Heat (MIA)', 'Milwaukee Bucks (MIL)', 'Minnesota Timberwolves (MIN)', 'Brooklyn Nets (BKN)', 'New York Knicks (NYK)', 'Orlando Magic (ORL)', 'Indiana Pacers (IND)', 'Philadelphia 76ers (PHI)', 'Phoenix Suns (PHX)', 'Portland Trail Blazers (POR)', 'Sacramento Kings (SAC)', 'San Antonio Spurs (SAS)', 'Oklahoma City Thunder (OKC)', 'Toronto Raptors (TOR)', 'Utah Jazz (UTA)', 'Memphis Grizzlies (MEM)', 'Washington Wizards (WAS)', 'Detroit Pistons (DET)', 'Charlotte Hornets (CHA)']
+NBA_TEAMS = ['Atlanta Hawks (ATL)','Boston Celtics (BOS)','Brooklyn Nets (BKN)','Charlotte Hornets (CHA)','Chicago Bulls (CHI)','Cleveland Cavaliers (CLE)','Dallas Mavericks (DAL)','Denver Nuggets (DEN)','Detroit Pistons (DET)','Golden State Warriors (GSW)','Houston Rockets (HOU)','Indiana Pacers (IND)','Los Angeles Clippers (LAC)','Los Angeles Lakers (LAL)','Memphis Grizzlies (MEM)','Miami Heat (MIA)','Milwaukee Bucks (MIL)','Minnesota Timberwolves (MIN)','New Orleans Pelicans (NOP)','New York Knicks (NYK)','Oklahoma City Thunder (OKC)','Orlando Magic (ORL)','Philadelphia 76ers (PHI)','Phoenix Suns (PHX)','Portland Trail Blazers (POR)','Sacramento Kings (SAC)','San Antonio Spurs (SAS)','Toronto Raptors (TOR)','Utah Jazz (UTA)','Washington Wizards (WAS)']
 
 K_FACTOR = 20
 PRED_MODELS = {

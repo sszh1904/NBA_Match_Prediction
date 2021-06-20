@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
+import datetime
 from nba_api.stats.static import teams
 from nba_api.stats.endpoints import leaguegamefinder
 from utils import *
@@ -57,14 +57,13 @@ def get_api_data(start_date, end_date):
 
         games = gamefinder.get_data_frames()[0]
         games['GAME_DATE'] = pd.to_datetime(games['GAME_DATE'])
-        start_date = datetime.combine(start_date, datetime.min.time())
-        end_date = datetime.combine(end_date, datetime.min.time())
-        games = games[(games['GAME_DATE'] >= start_date) & (games['GAME_DATE'] >= end_date) & (games['WL'].isnull() == False)]
+        start_date = datetime.datetime.combine(start_date, datetime.datetime.min.time())
+        end_date = datetime.datetime.combine(end_date, datetime.datetime.min.time())
+        games = games[(games['GAME_DATE'] >= start_date) & (games['GAME_DATE'] <= end_date) & (games['WL'].isnull() == False)]
         df = df.append(games)
     
-    df = df.sort_values('GAME_DATE',ascending=False)
+    df = df.sort_values('GAME_DATE', ascending=True)
     df.reset_index(drop=True, inplace=True)
-    df.to_csv('test.csv')
     return df
 
 @st.cache
@@ -76,8 +75,11 @@ def get_prediction(df, game_date, home_team, away_team):
 
     curr_date = games['GAME_DATE'].min()
     # mid_season = datetime.datetime(2015, 1, 18)
-    game_date = datetime.combine(game_date, datetime.min.time())
+    game_date = datetime.datetime.combine(game_date, datetime.datetime.min.time())
     end_date = games['GAME_DATE'].max()
+    print(curr_date)
+    print(game_date)
+    print(end_date)
     hist = pd.DataFrame()
 
     team_stats = {}
@@ -110,7 +112,9 @@ def get_prediction(df, game_date, home_team, away_team):
         update_pregame_stats(team_stats, upcoming)
         calc_team_disparity(team_stats, upcoming)
         
-        upcoming['PREDICTION'] = predict_outcome(hist, upcoming)
+        if curr_date != games['GAME_DATE'].min():
+            # print(df)
+            upcoming['PREDICTION'] = predict_outcome(hist, upcoming)
 
         post_game_stats = games[games['GAME_DATE'] == game_date]
         merged_df = pd.merge(upcoming, post_game_stats, on=["GAME_DATE", "TEAM_ABBREVIATION_x", "TEAM_ABBREVIATION_y"], how='left')
@@ -129,11 +133,11 @@ def get_prediction(df, game_date, home_team, away_team):
 
 # Predict Button
 if st.button('PREDICT!'):
-    df = get_api_data(start_date, end_date)
+    # df = get_api_data(start_date, end_date)
+    df = pd.read_csv('test.csv')
     if (len(df) <= 0):
         st.error('Connection timed out. Please try again later!')
     else:
-        df.to_csv('test.csv')
         prediction = get_prediction(df, game_date, home_team, away_team)
         if prediction == 1:
             st.success(f'{home_team} is predicted to win!')
