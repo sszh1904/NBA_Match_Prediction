@@ -20,7 +20,7 @@ class MultiPageApp:
         
         st.sidebar.write('''
         ### Source Code: 
-        https://github.com/CJianYu98/NBA_Prediction
+        [Github](https://github.com/CJianYu98/NBA_Prediction)
         ''')
 
         st.sidebar.write('''
