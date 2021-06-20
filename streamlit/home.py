@@ -18,7 +18,7 @@ def app():
 
     # Project Summary
     st.header("Project Summary")
-    st.image("data_pipeline.png")
+    # st.image("data_pipeline.png")
 
     # Contributions
     st.header("Contributions")
