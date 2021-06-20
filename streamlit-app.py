@@ -1,8 +1,8 @@
 import streamlit as st
-from multipage import MultiPageApp
-import home, dataset, features, model
+from streamlit_app import multipage
+from streamlit_app import home, dataset, features, model
 
-app = MultiPageApp()
+app = multipage.MultiPageApp()
 
 
 # Adding your projects

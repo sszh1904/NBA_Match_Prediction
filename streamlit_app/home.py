@@ -16,10 +16,10 @@ def app():
     * **Our Model** - Where we showcase our final model and it's performance!
     ''')
     
-
     # Project Summary
     st.header("Project Summary")
-    st.image("./streamlit/data_pipeline.png")
+    st.image("streamlit_app/data_pipeline.png")
+    
 
     # Contributions
     st.header("Contributions")

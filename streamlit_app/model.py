@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_score
 import plotly.graph_objects as go
-from utils import *
+from streamlit_app import utils
 
 def app():
     # Page Title
