@@ -18,13 +18,15 @@ def app():
     ''')
 
     path = os.path.dirname(__file__)
-    my_file = path+'/data_pipeline.png'
+    st.write(path)
+    st.write(os.listdir(path))
+    
 
     # Project Summary
     st.header("Project Summary")
     # st.image("streamlit/data_pipeline.png")
-    st.write(my_file)
-    st.image(my_file)
+    # st.write(my_file)
+    # st.image(my_file)
 
     # Contributions
     st.header("Contributions")
