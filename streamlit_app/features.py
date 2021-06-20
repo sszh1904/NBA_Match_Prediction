@@ -107,7 +107,7 @@ def app():
 
     @st.cache
     def read_season_df(season):
-        season_df = pd.read_csv(f'../data/annual_data/season_2{season[:-3]}_data.csv')
+        season_df = pd.read_csv(f'data/annual_data/season_2{season[:-3]}_data.csv')
         return season_df
 
     season_df = read_season_df(season)

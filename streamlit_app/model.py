@@ -69,7 +69,7 @@ def app():
 
     @st.cache
     def read_prediction(season):
-        df = pd.read_csv(f'../data/prediction/s{season[:-3]}_history.csv')
+        df = pd.read_csv(f'data/prediction/s{season[:-3]}_history.csv')
         predictions = df.dropna(subset=['PREDICTION'])
 
         df.fillna('NA', inplace=True)
@@ -112,7 +112,7 @@ def app():
     ''')
 
     # Plotly barchart
-    comparison_df = pd.read_csv('../data/model_performance/higher_WL_comparison.csv')
+    comparison_df = pd.read_csv('data/model_performance/higher_WL_comparison.csv')
     seasons = comparison_df['Season']
     y1 = comparison_df['Higher WL record winning % (> midseason)']
     y2 = comparison_df['Accuracy']
