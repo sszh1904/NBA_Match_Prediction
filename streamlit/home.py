@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 
 def app():
     # Page Title
@@ -23,3 +24,11 @@ def app():
     # Contributions
     st.header("Contributions")
     st.write("This was a project as part of the Data Associate Programme by SMU BIA. In the team, we have [Brandon](https://www.linkedin.com/in/brandon-tan-jun-da/), [Jian Yu](https://www.linkedin.com/in/chen-jian-yu/), [Samuel](https://www.linkedin.com/in/samuel-sim-7368241aa/) and [Leonard](https://www.linkedin.com/in/leonard-siah-0679631a1/). Thank you for checking us out and have a nice day!")
+
+    def file_selector(folder_path='.'):
+        filenames = os.listdir(folder_path)
+        selected_filename = st.selectbox('Select a file', filenames)
+        return os.path.join(folder_path, selected_filename)
+
+    filename = file_selector()
+    st.write('You selected `%s`' % filename)
