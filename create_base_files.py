@@ -12,6 +12,15 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn import svm
 
 S2020_START_DATE = datetime.datetime(2020, 12, 22)
+NBA_SEASONS = {
+    '2014-15': {'start_date': '2014-10-28', 'end_date': '2015-04-15'},
+    '2015-16': {'start_date': '2015-10-27', 'end_date': '2016-04-13'},
+    '2016-17': {'start_date': '2016-10-25', 'end_date': '2017-04-12'},
+    '2017-18': {'start_date': '2017-10-17', 'end_date': '2018-04-11'},
+    '2018-19': {'start_date': '2018-10-16', 'end_date': '2019-04-10'},
+    '2019-20': {'start_date': '2019-10-22', 'end_date': '2020-03-11'},
+    '2020-21': {'start_date': '2020-12-22', 'end_date': '2021-05-16'}
+}
 K_FACTOR = 20
 PRED_MODELS = {
             'Linear Regression': LinearRegression(),
@@ -71,9 +80,11 @@ def create_upcoming_games_csv():
 
 def create_season_history_csv():
     print("Creating season history csv file...")
-    games = extract_nba_api()
+    # games = extract_nba_api()
     # games.to_csv('data/s2020_raw_data.csv', index=False)
     # games = pd.read_csv('data/s2020_raw_data.csv')
+    games = pd.read_csv('data/annual_data/annual_nba_data.csv')
+    games = games[games['GAME_DATE'].between(NBA_SEASONS['2014-15']['start_date'], NBA_SEASONS['2014-15']['end_date'])]
     games = clean_api_data(games)
 
     games['GAME_DATE'] = pd.to_datetime(games['GAME_DATE'], format='%Y-%m-%d')
@@ -82,7 +93,8 @@ def create_season_history_csv():
     games.reset_index(drop=True, inplace=True)
 
     game_date = start_date = games['GAME_DATE'].min()
-    mid_season = datetime.datetime(2021, 2, 23)
+    # mid_season = datetime.datetime(2021, 2, 23)
+    mid_season = datetime.datetime(2015, 1, 18)
     end_date = games['GAME_DATE'].max()
     hist = pd.DataFrame()
 
@@ -102,6 +114,13 @@ def create_season_history_csv():
             upcoming['PREDICTION'] = predict_outcome(hist, upcoming)
         else:
             upcoming['PREDICTION'] = np.nan
+        # prediction = []
+        # for i, row in upcoming.iterrows():
+        #     if (row['GAME_NO_x'] > 41) or (row['GAME_NO_y'] > 41):
+        #         p = predict_outcome(hist, upcoming)
+        #         prediction += p
+        #     else:
+        #         prediction.append(np.nan)
         
         post_game_stats = games[games['GAME_DATE'] == game_date]
         merged_df = pd.merge(upcoming, post_game_stats, on=["GAME_DATE", "TEAM_ABBREVIATION_x", "TEAM_ABBREVIATION_y"], how='left')
@@ -116,7 +135,8 @@ def create_season_history_csv():
         game_date = game_date + datetime.timedelta(days=1)
 
     hist = rearrange_columns(hist)
-    hist.to_csv("data/season_history.csv", index=False)
+    # hist.to_csv("data/season_history.csv", index=False)
+    hist.to_csv("data/prediction/s2014_history.csv", index=False)
 
 def extract_nba_api():
     print("Extracting nba api data...")

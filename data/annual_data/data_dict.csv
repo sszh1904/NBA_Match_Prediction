@@ -1,0 +1,29 @@
+﻿Column Name,Description,Data Type
+SEASON_ID,Unique id for each regular season,String
+TEAM_ID,Unique id for each NBA team,Integer
+TEAM_ABBREVIATION,Abbreviation for each NBA team's team name,String
+TEAM_NAME,Full team name,String
+GAME_ID,Unique game id for each NBA game,String
+GAME_DATE,Game date where the game happens,String
+MATCHUP,"Opponent for the game. ""X vs. Y"" indicates that Team X is playing home game while ""X @ Y"" indicates that Team X is playing away game. ",String
+WL,"Game result for the team. 'W' indicates Win, 'L' indicates Lose.",String
+MIN,Total minutes played by all the players in the team,Integer
+PTS,Total points scored ,Integer
+FGM,Field Goals Made,Integer
+FGA,Field Goals Attempted ,Integer
+FG_PCT,Field Goal Percentage ,Float
+FG3M,3-point Field Goals Made ,Integer
+FG3A,3-point Field Goals Attempted ,Float
+FG3_PCT,3-point Field Goal Percentage,Float
+FTM,Free Throws Made ,Integer
+FTA,Free Throws Attempted ,Integer
+FT_PCT,Free Throw Percentage ,Float
+OREB,Offensive Rebounds,Float
+DREB,Defensive Rebounds,Float
+REB,Total Rebounds (Offensive + Defensive),Float
+AST,Total Assists,Integer
+STL,Total Steals,Float
+BLK,Total Blocks,Integer
+TOV,Total Turnovers,Integer
+PF,Total Personal Fouls,Integer
+PLUS_MINUS,Point Difference (self - opponent),Float
