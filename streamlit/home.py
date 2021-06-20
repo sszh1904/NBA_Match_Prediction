@@ -17,17 +17,14 @@ def app():
     * **Our Model** - Where we showcase our final model and it's performance!
     ''')
 
-    def file_selector(folder_path='.'):
-        filenames = os.listdir(folder_path)
-        selected_filename = st.selectbox('Select a file', filenames)
-        return os.path.join(folder_path, selected_filename)
-
-    filename = file_selector()
-    st.write('You selected `%s`' % filename)
+    path = os.path.dirname(__file__)
+    my_file = path+'/data_pipeline.png'
 
     # Project Summary
     st.header("Project Summary")
-    st.image("streamlit/data_pipeline.png")
+    # st.image("streamlit/data_pipeline.png")
+    st.write(my_file)
+    st.image(my_file)
 
     # Contributions
     st.header("Contributions")
