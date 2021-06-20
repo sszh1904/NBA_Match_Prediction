@@ -1,6 +1,6 @@
 import streamlit as st
 from multipage import MultiPageApp
-from streamlit import dataset, features, model, home
+import home, dataset, features, model
 
 app = MultiPageApp()
 
