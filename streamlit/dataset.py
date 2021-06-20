@@ -29,7 +29,7 @@ def app():
 
     @st.cache
     def read_season_df(season):
-        all_data = pd.read_csv('../data/annual_data/annual_nba_data.csv')
+        all_data = pd.read_csv('data/annual_data/annual_nba_data.csv')
         season_df = all_data[all_data['GAME_DATE'].between(NBA_SEASONS[season]['start_date'], NBA_SEASONS[season]['end_date'])]
         return season_df
 
@@ -42,5 +42,5 @@ def app():
     # Data Dictionary
     st.subheader("Data Dictionary")
     st.write("* Description of data variables in the dataset above")
-    data_dict = pd.read_csv('../data/annual_data/data_dict.csv')
+    data_dict = pd.read_csv('data/annual_data/data_dict.csv')
     st.table(data_dict)
