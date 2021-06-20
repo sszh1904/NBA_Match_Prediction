@@ -2,6 +2,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import LinearRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn import svm
+import pandas as pd
 
 NBA_SEASONS = {
     '2014-15': {'start_date': '2014-10-28', 'end_date': '2015-04-15'},
@@ -78,7 +79,7 @@ def predict_outcome(hist, upcoming):
         y_train = hist['WL_x']
         y_train_lm = hist['PLUS_MINUS_x']
         X_test = upcoming[features_list]
-        
+
         m = PRED_MODELS[model_name]
 
         if model_name == 'Linear Regression':
