@@ -3,7 +3,6 @@ import pandas as pd
 from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_score
 import plotly.graph_objects as go
 from streamlit_app import utils
-from utils import *
 
 
 def app():
@@ -66,7 +65,7 @@ def app():
     st.header('Model Prediction & Performance')
     st.subheader('Choose a season to view prediction & performance')
     st.write("* Data shown only includes regular season data")
-    season_years = list(NBA_SEASONS.keys())
+    season_years = list(utils.NBA_SEASONS.keys())
     season = st.selectbox('', season_years)
 
     @st.cache
