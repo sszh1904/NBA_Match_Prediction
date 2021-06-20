@@ -1,5 +1,4 @@
 import streamlit as st
-import os
 
 def app():
     # Page Title
@@ -16,17 +15,11 @@ def app():
     * **Data Preparation** - Find out how we processed our data and conducted our feature engineering!
     * **Our Model** - Where we showcase our final model and it's performance!
     ''')
-
-    path = os.path.dirname(__file__)
-    st.write(path)
-    st.write(os.listdir(path))
     
 
     # Project Summary
     st.header("Project Summary")
-    # st.image("streamlit/data_pipeline.png")
-    # st.write(my_file)
-    # st.image(my_file)
+    st.image("./streamlit/data_pipeline.png")
 
     # Contributions
     st.header("Contributions")
