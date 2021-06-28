@@ -11,23 +11,23 @@ def app():
 
     # Description
     st.write('''
-    After the Data Preparation phase, we performed correlation & covariance check and features importance selection on the selected features listed on Data Preparation page. \n
-    In the end, only 3 features are significant:
+    After the Data Preparation phase, we performed correlation & covariance check as well as features importance selection on the selected features listed on Data Preparation page. \n
+    In the end, only 3 features are found to be significant:
     * **Offensive Efficiency (OEff)**
     * **Defensive Efficiency (DEff)**
     * **Elo Rating (ELO)**
 
-    **Interesting Fact: Home court advantage has also been factored in our model even though it is not one of the feature. On the Data Preparation page, disparity between teams were calculated by using Home Team's stats - Away Team's stats. As such, we are essentially modelling what is the disparity range that will more likely result in predicting the Home Team winning the game. 
+    **Interesting Fact: Home court advantage has also been factored in our model even though it is not one of the features. On the Data Preparation page, disparity between teams were calculated by using Home Team's stats - Away Team's stats. As such, we are essentially modelling the likelihood of the Home Team winning the game given the disparity in statistics between the Home Team and the Away Team.
     ''')
 
     st.write('''
     ### Model Training & Prediction:\n
-    * Data will be split into respective NBA season
-    * First half of the season will be used as training data, while second half used as testing data
+    * Data will first be split into the respective NBA seasons
+    * First half of the season will be used as training data, while second half is used as testing data
     * Different classifiers were used to find the best performing one
     * Accuracy and F1 score were used to evaluate the model performance
     * Top 5 models were picked out to conduct majority voting 
-    * Final prediction will be based on the majority voting
+    * Final prediction will be based on the outcome of majority voting
     ''')
     st.write('')
     st.write('''
@@ -103,11 +103,11 @@ def app():
     # Compare with actual higher WL-record winning percentage
     st.header('Our Evaluation Benchmark')
     st.write('''
-    Other than just looking at the different evaluation metric scores, we also compare our accuracy with the actual winning percentage of the team with higher Win-Lose record.
+    Other than just looking at the different evaluation metric scores, we also compared our accuracy against the percentage of the team with the better Win-Lose record winning the game.
 
     Justification: 
-    * The most straighforward method of predicting which team is going win in a match up will be to choose the team with the higher W-L record
-    * If our model can outperform the above method, then we will consider our model a success
+    * The most straighforward method of predicting the winner of a match up will be simply choosing the team with the better W-L record
+    * If our model can outperform the above method, then we can consider our model a success
 
     Below is the comparison of the accuracy of our model versus choosing the higher W-L record team. 
     ''')
@@ -129,5 +129,5 @@ def app():
     # Conclusion
     st.subheader('Overall Result')
     st.write('''
-    From the bar chart above, we can see that our model is performing better than just simply picking the team with higher W-L record to win the game! :smile:
+    From the bar chart above, it is evident that our model performed better than just simply picking the team with better W-L record to win the game! :smile:
     ''')

@@ -7,12 +7,12 @@ def app():
     # Welcome Message
     st.header("Welcome!")
     st.write('''
-    Being a group of sports enthusiasts, the team is interested in prediciting the outcome of NBA games using Machine Learning techniques.
+    Being a group of basketball enthusiasts, the team is interested in prediciting the outcome of NBA games using Machine Learning techniques.
 
     You may navigate to different pages using the sidebar to get a better understanding of our project and prediction model.
 
     * **Dataset** - Explore our dataset here!
-    * **Data Preparation** - Find out how we processed our data and conducted our feature engineering!
+    * **Data Preparation** - Find out how we prepared our data and conducted some feature engineering!
     * **Our Model** - Where we showcase our final model and it's performance!
     ''')
     

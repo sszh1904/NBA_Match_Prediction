@@ -12,10 +12,10 @@ def app():
     # Description
     st.write('''
     ### Welcome to live prediction!
-    This is where you can pick any NBA regular season game and get our model to predict the outcome of the your selected game!
+    This is where you can pick any NBA regular season game and use our model to predict the outcome of your selected game!
 
-    #### How this works?
-    * You need to know the start date and end date of a NBA regular season. This is so that our model can retrieve the data required to train our prediction model.
+    #### How to use?
+    * You need to know the start date and end date of a NBA regular season. This is so that our model can retrieve the data required to train our prediction model for that season.
     * Select the date where the game of your interest will be held
     * Select the game from the dropdown 
     * Click on "PREDICT!" to get our model's prediction
@@ -23,12 +23,12 @@ def app():
     #### Things to note
     * We can only predict outcome for games that are 16 hours ahead! Teams should have played at least 5 games in the season. 
     * Game date should be in Singapore Time
-    * Start and end data of a NBA regular season needs to be correct to ensure the right data are retrieved
-    * Prediction on games after the mid season will have better performance
-    * Retrieval of data from API endpoint has a limit, may have to wait for it to reset if you were to resubmit the game details. Hence, please ensure that the date selected are correct! 
+    * Start and end data of a NBA regular season needs to be correct to ensure the right data is retrieved
+    * Prediction on games after the mid season is highly recommended as the model would produce significantly better results
+    * There is a limit to the number of request to retrieve data from the API endpoint, thus you may have to wait for it to reset if you were to resubmit the game details. Hence, please ensure that the selected dates are correct! 
 
     ### **Disclaimer!!!**
-    This project is for academic purposes. Betting using our prediction is strongly discouraged. The team is not responsible for any loss!\n 
+    This project is for academic purposes. Betting using our prediction model is strongly discouraged. The team is NOT responsible for any loss!\n 
     **PLAY AT YOUR OWN RISK!!!**
     ''')
     st.write('')

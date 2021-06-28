@@ -23,7 +23,7 @@ def app():
 
     # Description
     st.markdown('''
-    To train our prediction model, we created new features in our dataset using the original teams' statistics provided from the NBA API. Formula for each new features created will be shown below.\n
+    To train our prediction model, we created new features in our dataset using the original teams' statistics retrieved from the NBA API. Formula for each new feature created will be shown below.\n
     Features created are as follows:
     * [**Offense Efficiency**](https://www.sportsrec.com/calculate-teams-offensive-defensive-efficiencies-7775395.html)
     * [**Defense Efficiency**](https://www.sportsrec.com/calculate-teams-offensive-defensive-efficiencies-7775395.html)
@@ -44,13 +44,13 @@ def app():
     # Section 1: ELO
     st.subheader('ELO Calculation')
     st.write('''
-    We drew inspirations from [FiveThirtyEight](https://fivethirtyeight.com/features/how-we-calculate-nba-elo-ratings/) for ELO rating feature. 
+    We drew inspirations from [FiveThirtyEight](https://fivethirtyeight.com/features/how-we-calculate-nba-elo-ratings/) for the ELO rating feature. 
 
-    Every team will start with the same ELO score (eg. 1500) and their elo score will be adjusted according to the game result and their respective opponent for the game. 
+    Every team will start with the same ELO score (eg. 1500) which will be adjusted after each game according to the game result and their respective opponent for the game. 
 
-    Each team's probability of winning the game will first be calculated, and the amount elo adjusted will be based on the _indiviual team's probability of winning_ that game and a constant _K_. 
+    Each team's probability of winning the game will first be calculated, then the adjusted amount will be based on the _indiviual team's probability of winning_ that game and a constant _K_. 
 
-    The higher the value of K, the more sensitive elo rating is to recent games. 
+    The higher the value of K, the more sensitive the elo rating is to recent games. 
     ''')
     st.latex('Team \space 1 \space ELO: ELO1, \space\space\space Team \space 2 \space ELO: ELO2')
     st.latex('P1: \space Probability \space of \space Team \space 1 \space winning \space against \space Team \space 2')
@@ -69,7 +69,7 @@ def app():
     # Section 1: Disparity
     st.subheader("Stats Disparity")
     st.write('''
-    Offensive Efficiency, Defensive Efficiency and Elo Rating were calculated for each team after each game. However, instead of using these respective features by each team, we decided to calculate the disparity of the key basketball statistics for each team prior to the start of their next game to predict the outcome. 
+    Offensive Efficiency, Defensive Efficiency and Elo Rating were calculated for each team after each game. However, instead of using the respective values for each team, we decided to find the disparity of the key basketball statistics between the 2 teams prior to each game, which are then used to predict the outcome of that game.
 
     Disparity were calculated on these features:
     * **Points (PTS)**
@@ -93,7 +93,7 @@ def app():
     st.header("EDA")
     st.write('''
     Below shows the new dataframe with the new calculated features for each season.\n
-    Since there are 2 records for the same game (each record displaying the statistic for a team in a game), we merge and extended the record to include statistics for both team playing the same game into 1 record.
+    Since there are 2 records for the same game (each record displaying the statistic for a team in a game), we merged and extended the records to include statistics for both team playing the same game into 1 record (or row).
     ''')
 
     # Show new dataframe
