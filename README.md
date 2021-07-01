@@ -2,7 +2,7 @@
 
 This project is part of Singapore Management University (SMU) Business Intelligence and Analytics (BIA) Club's Data Associate Program (DAP). 
 
-During the program, the team tries to create a prediction model to predict the outcome of a NBA game during the regular season. 
+During the program, the team tried to create a prediction model to predict the outcome of an NBA game during the regular season. 
 
 ---
 ### Our App
@@ -19,7 +19,7 @@ We have made an interactive web application using Streamlit! Visit our app [here
 
 ---
 ### Description
-Being a group of basketball enthusiasts, the team is interested in prediciting the outcome of NBA games using Machine Learning techniques. We explored many different models made by others online to get inspirations and ideas. We know apply our own domain knowledge on top of the useful information we searched online and developed our own model. 
+Being a group of basketball enthusiasts, the team is interested in predicting the outcome of NBA games using Machine Learning techniques. We explored many different models made by others online to get inspirations and ideas. We also applied our own domain knowledge on top of the useful information we obtained from online research and thereafter developed our own model. 
 
 ---
 ### Dataset
@@ -31,13 +31,13 @@ We retrieved data from NBA Season 2014-15 to 2020-21.
 
 ---
 ### Data Preparation
-To train our prediction model, we created new features in our dataset using the original teams' statistics retrieved from the NBA API.
+To train our prediction model, we created new features using the original teams' statistics retrieved from the NBA API.
 
 Features created:
 1. Offensive Efficiency
 2. Defensive Efficiency
 3. ELO
-4. Stats disparity between 2 teams (for every game before predicting)
+4. Disparity between statistics of both teams (for every game before predicting)
 
 More details on our feature engineering process can be found on our [web application](https://share.streamlit.io/cjianyu98/nba_prediction/main/streamlit-app.py)!
 
