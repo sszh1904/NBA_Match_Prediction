@@ -4,20 +4,24 @@ This project is part of Singapore Management University (SMU) Business Intellige
 
 During the program, the team tries to create a prediction model to predict the outcome of a NBA game during the regular season. 
 
+---
 ### Our App
 We have made an interactive web application using Streamlit! Visit our app [here](https://share.streamlit.io/cjianyu98/nba_prediction/main/streamlit-app.py) to explore more!
 
+---
 ### Table of Contents
 - [Description](#Description)
 - [Dataset](#Dataset)
 - [Data Preparation](#Data-preparation)
 - [Model](#Model)
-- [Navigation](#Navigation)
+- [Code Navigation](#Code-Navigation)
 - [Contributors](#contributors)
 
+---
 ### Description
 Being a group of basketball enthusiasts, the team is interested in prediciting the outcome of NBA games using Machine Learning techniques. We explored many different models made by others online to get inspirations and ideas. We know apply our own domain knowledge on top of the useful information we searched online and developed our own model. 
 
+---
 ### Dataset
 Data is retrieved from an NBA API client for [www.nba.com](https://www.nba.com). More information about the API can be found [here](https://github.com/swar/nba_api).
 
@@ -25,6 +29,7 @@ We retrieved data from NBA Season 2014-15 to 2020-21.
 
 [Back To The Top](#nba-match-predictor)
 
+---
 ### Data Preparation
 To train our prediction model, we created new features in our dataset using the original teams' statistics retrieved from the NBA API.
 
@@ -38,6 +43,7 @@ More details on our feature engineering process can be found on our [web applica
 
 [Back To The Top](#nba-match-predictor)
 
+---
 ### Model 
 Through various features selection methods, only 3 features are found to be significant;
 1. Offensive Efficiency
@@ -65,7 +71,8 @@ Justification:
 
 [Back To The Top](#nba-match-predictor)
 
-### Navigation
+---
+### Code Navigation
 1. [Dataset (including raw and processed data)](https://github.com/CJianYu98/NBA_Prediction/tree/main/data)
 2. [Data Processing Notebook](https://github.com/CJianYu98/NBA_Prediction/blob/main/notebook/data_process.ipynb)
 3. [Modelling Notebook](https://github.com/CJianYu98/NBA_Prediction/blob/main/notebook/model.ipynb)
@@ -73,9 +80,11 @@ Justification:
 
 [Back To The Top](#nba-match-predictor)
 
+---
 ### Contributors
 
 1. Brandon Tan Jun Da ([Linkedin](https://www.linkedin.com/in/brandon-tan-jun-da/), [Github](https://github.com/brandontjd))
 2. Chen Jian Yu ([Linkedin](https://www.linkedin.com/in/chen-jian-yu/), [Github](https://github.com/CJianYu98))
 3. Leonard Siah Tian Long ([Linkedin](https://www.linkedin.com/in/leonard-siah-0679631a1/), [Github](https://github.com/leoking98))
 1. Samuel Sim Zhi Han ([Linkedin](https://www.linkedin.com/in/samuel-sim-7368241aa/), [Github](https://github.com/sszh1904))
+---
